@@ -757,23 +757,35 @@ var mcph = new ENCripto();
 //</editor-fold>
 
 
-var chatApp = express();
-var http = require('http');
-var httpServer = http.createServer(chatApp);
-var io = require('socket.io')(httpServer);
+//var chatApp = express();
+//var http = require('http');
+//var httpServer = http.createServer(chatApp);
+//var io = require('socket.io')(httpServer);
+//var numUsers = 0;
+//var hashUsersById = {};
+//
+//chatApp.get('/WSClient', function (req, res) {
+//    res.sendFile(__dirname + '/HTML/index.html');
+//});
+//
+//chatApp.get('/WSEXTClient', function (req, res) {
+//    res.sendFile(__dirname + '/HTML/index2.html');
+//});
+
+const socketIO = require('socket.io');
+const path = require('path');
+
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, '/HTML/index2.html');
+
+const server = express()
+  .use((req, res) => res.sendFile(INDEX) )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+const io = socketIO(server);
+
 var numUsers = 0;
 var hashUsersById = {};
-
-chatApp.get('/WSClient', function (req, res) {
-    res.sendFile(__dirname + '/HTML/index.html');
-});
-
-chatApp.get('/WSEXTClient', function (req, res) {
-    res.sendFile(__dirname + '/HTML/index2.html');
-});
-
-
-
 
 io.on('connection', function (socket) {
     mc.debug('[CHAT SOKET-IO]-[SOKET:[' + socket.id + ']]-[connection]');
@@ -935,8 +947,7 @@ io.on('connection', function (socket) {
 });
 
 
-chatApp.set('port', (process.env.PORT || 3001));
-
-httpServer.listen(app.get('port'), function () {
-    mc.info('[RADDAR]-[BACKEND]-[CHAT SOKET-IO] init on port:[3001]');
-});
+//chatApp.set('port', (process.env.PORT || 3001));
+//httpServer.listen(app.get('port'), function () {
+//    mc.info('[RADDAR]-[BACKEND]-[CHAT SOKET-IO] init on port:[3001]');
+//});
