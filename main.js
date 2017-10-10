@@ -935,8 +935,8 @@ io.on('connection', function (socket) {
 });
 
 
-var port = process.env.port || 3001;
+chatApp.set('port', (process.env.PORT || 3001));
 
-httpServer.listen(port, function () {
+httpServer.listen(app.get('port'), function () {
     mc.info('[RADDAR]-[BACKEND]-[CHAT SOKET-IO] init on port:[3001]');
 });
