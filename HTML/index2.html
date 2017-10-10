@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>■■■■■■■■■■■■■■■</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+        <script type="text/javascript" src="http://sscnm.inegi.org.mx/Componente/ext-all.js"></script>
+        <script type="text/javascript" src="http://sscnm.inegi.org.mx/Componente/classic/theme-crisp/theme-crisp.js"></script>
+        <link rel='stylesheet' type='text/css' href='http://sscnm.inegi.org.mx/Componente/classic/theme-crisp/resources/theme-crisp-all.css' />
+        <script type="text/javascript" src="http://sscnm.inegi.org.mx/Componente/classic/locale/locale-es.js"></script>
+
+        <script src="/socket.io/socket.io.js"></script>
+
+        <script type="text/javascript">
+
+
+            var data = {
+                nombre: 'dasdsdas'
+            };
+
+            var soketConnection = null;
+            var store1 = Ext.create('Ext.data.Store', {
+                autoLoad: true,
+                data: []
+            });
+            var store2 = Ext.create('Ext.data.Store', {
+                autoLoad: true,
+                data: []
+            });
+            var store3 = Ext.create('Ext.data.Store', {
+                autoLoad: true,
+                data: []
+            });
+            var connect = function () {
+                try {
+
+                    if (soketConnection !== null) {
+                        soketConnection.disconnect();
+                        soketConnection = null;
+                        Ext.getCmp('buttonConnect').setText('CONNECT');
+                    } else {
+
+                        if (Ext.getCmp('textAlias').getValue() === '') {
+                            alert('Llene el campo de [ALIAS]');
+                            return;
+                        }
+
+                        soketConnection = io();
+                        soketConnection.on('reciveMessage', function (dataPacket) {
+                            store = Ext.getCmp('gridChat').getStore();
+                            store.add(
+                                    {
+                                        room: dataPacket.room,
+                                        to: dataPacket.to,
+                                        from: dataPacket.from,
+                                        message: dataPacket.message
+                                    }
+                            );
+                            Ext.getCmp('gridChat').reconfigure(store);
+                            Ext.getCmp('gridChat').getView().focusRow(store.getCount());
+                        });
+                        soketConnection.on('updateAllUserList', function (input) {
+                            store = Ext.getCmp('gridUsers').getStore();
+                            store.removeAll();
+                            store.add({user: 'ALL'});
+                            for (var key in input) {
+                                store.add(input[key]);
+                            }
+                            Ext.getCmp('gridUsers').reconfigure(store);
+                            Ext.getCmp('gridUsers').getView().focusRow(store.getCount());
+                        });
+
+                        soketConnection.on('updateAllRoomList', function (input) {
+                            store = Ext.getCmp('gridRooms').getStore();
+                            store.removeAll();
+                            store.add({room: 'GENERAL'});
+                            for (var key in input) {
+                                store.add(input[key]);
+                            }
+                            Ext.getCmp('gridRooms').reconfigure(store);
+                            Ext.getCmp('gridRooms').getView().focusRow(store.getCount());
+                        });
+
+
+
+                        soketConnection.emit('addUser', Ext.getCmp('textAlias').getValue());
+                        Ext.getCmp('buttonConnect').setText('DISCONECT');
+                    }
+
+                } catch (e) {
+                    alert("Error [" + e.message + "]");
+                    e.stack;
+                }
+            };
+            var send = function () {
+                if (soketConnection !== null && Ext.getCmp('textMessage').getValue() !== '') {
+
+                    var to = 'ALL';
+                    try {
+                        if (Ext.getCmp('gridUsers').getSelectionModel().hasSelection()) {
+                            var row = Ext.getCmp('gridUsers').getSelectionModel().getSelection()[0];
+                            to = row.get('user');
+                        }
+                    } catch (e) {
+                        to = 'ALL';
+                    }
+
+
+                    var room = 'GENERAL';
+                    try {
+                        if (Ext.getCmp('gridRooms').getSelectionModel().hasSelection()) {
+                            var row = Ext.getCmp('gridRooms').getSelectionModel().getSelection()[0];
+                            room = row.get('room');
+                        }
+                    } catch (e) {
+                        room = 'GENERAL';
+                    }
+
+
+                    soketConnection.emit('sendMessage',
+                            {
+                                room: room,
+                                to: to,
+                                from: Ext.getCmp('textAlias').getValue(),
+                                message: Ext.getCmp('textMessage').getValue()
+                            }
+                    );
+                    Ext.getCmp('textMessage').setValue('');
+                }
+            };
+            var refreshUsers = function () {
+                if (soketConnection !== null) {
+                    soketConnection.emit('getAllUsers', {});
+                }
+            };
+            var refreshRooms = function () {
+                if (soketConnection !== null) {
+                    soketConnection.emit('getAllRooms', {});
+                }
+            };
+            var addRoom = function () {
+                if (soketConnection !== null) {
+                    soketConnection.emit('createOrJoinRoom', Ext.getCmp('textRoomName').getValue());
+                    Ext.getCmp('windowAddRoom').close();
+                }
+            };
+
+
+            var roomSelect = function (component, record, item, index, e, eOpts) {
+
+
+                soketConnection.emit('createOrJoinRoom', record.get('room'));
+
+                soketConnection.emit('getAllUsers',
+                        {
+                            room: record.get('room')
+                        }
+                );
+
+
+            };
+
+
+
+
+
+            var callAddRoomWindow = function () {
+                Ext.create('Ext.window.Window', {
+                    title: 'ADD ROOM',
+                    modal: true,
+                    height: 127,
+                    width: 400,
+                    id: 'windowAddRoom',
+                    layout: {
+                        type: 'vbox',
+                        align: 'center'
+                    },
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            id: 'textRoomName',
+                            fieldLabel: 'ROOM NAME'
+                        },
+                        {
+                            xtype: 'button',
+                            id: 'buttonAddJoin',
+                            text: 'ADD/JOIN',
+                            handler: addRoom
+                        }
+                    ]
+                }).show();
+            };
+
+            var chatClient = {
+                xtype: 'panel',
+                region: 'center',
+                id: 'containerApp',
+                layout: 'border',
+                title: 'SOKET IO',
+                items: [
+                    {
+                        xtype: 'container',
+                        region: 'north',
+                        split: true,
+                        height: 69,
+                        id: 'containerConnection',
+                        layout: 'absolute',
+                        items: [
+                            {
+                                xtype: 'textfield',
+                                x: 300,
+                                y: 20,
+                                id: 'textAlias',
+                                fieldLabel: 'ALIAS:'
+                            },
+                            {
+                                xtype: 'button',
+                                x: 620,
+                                y: 20,
+                                id: 'buttonConnect',
+                                text: 'CONNECT',
+                                handler: connect
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'container',
+                        region: 'center',
+                        split: true,
+                        id: 'containerBody',
+                        layout: 'border',
+                        items: [
+                            {
+                                xtype: 'container',
+                                region: 'center',
+                                split: true,
+                                id: 'containerChat',
+                                layout: 'border',
+                                items: [
+                                    {
+                                        xtype: 'gridpanel',
+                                        region: 'center',
+                                        title: 'CHAT',
+                                        id: 'gridChat',
+                                        store: store1,
+                                        columns: [
+                                            {
+                                                xtype: 'gridcolumn',
+                                                dataIndex: 'room',
+                                                text: 'ROOM'
+                                            },
+                                            {
+                                                xtype: 'gridcolumn',
+                                                dataIndex: 'from',
+                                                text: 'FROM'
+                                            },
+                                            {
+                                                xtype: 'gridcolumn',
+                                                dataIndex: 'to',
+                                                text: 'TO'
+                                            },
+                                            {
+                                                xtype: 'gridcolumn',
+                                                width: 628,
+                                                dataIndex: 'message',
+                                                text: 'MESSAGE'
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        xtype: 'container',
+                                        region: 'south',
+                                        split: true,
+                                        height: 65,
+                                        id: 'containerChatInterface',
+                                        layout: 'border',
+                                        items: [
+                                            {
+                                                xtype: 'container',
+                                                region: 'north',
+                                                height: 30,
+                                                layout: 'border',
+                                                items: [
+                                                    {
+                                                        xtype: 'textfield',
+                                                        region: 'center',
+                                                        id: 'textMessage',
+                                                        fieldLabel: 'MSG'
+                                                    },
+                                                    {
+                                                        xtype: 'button',
+                                                        id: 'buttonSend',
+                                                        region: 'east',
+                                                        width: 150,
+                                                        text: 'SEND',
+                                                        handler: send
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                xtype: 'container',
+                                region: 'west',
+                                width: 150,
+                                split: true,
+                                id: 'containerChatTo',
+                                layout: {
+                                    type: 'vbox',
+                                    align: 'stretch'
+                                },
+                                items: [
+                                    {
+                                        xtype: 'gridpanel',
+                                        id: 'gridRooms',
+                                        split: true,
+                                        height: 150,
+                                        title: 'ROOMS',
+                                        store: store3,
+                                        flex: 1,
+                                        columns: [
+                                            {
+                                                xtype: 'gridcolumn',
+                                                dataIndex: 'room',
+                                                text: 'ROOMS'
+                                            }
+                                        ],
+                                        listeners: {
+                                            itemclick: roomSelect
+                                        }
+                                    }, {
+                                        xtype: 'button',
+                                        id: 'buttonRefreshRooms',
+                                        text: 'REFRESH',
+                                        height: 50,
+                                        handler: refreshRooms
+                                    }, {
+                                        xtype: 'button',
+                                        id: 'buttonAddRoom',
+                                        text: 'ADD ROOM',
+                                        height: 50,
+                                        handler: callAddRoomWindow
+                                    },
+                                    {
+                                        xtype: 'gridpanel',
+                                        id: 'gridUsers',
+                                        split: true,
+                                        height: 150,
+                                        title: 'USERS',
+                                        store: store2,
+                                        flex: 1,
+                                        columns: [
+                                            {
+                                                xtype: 'gridcolumn',
+                                                dataIndex: 'user',
+                                                text: 'USER'
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        xtype: 'button',
+                                        id: 'buttonRefreshUsers',
+                                        text: 'REFRESH',
+                                        height: 50,
+                                        handler: refreshUsers
+                                    }
+                                ]
+                            }
+
+
+
+
+
+
+
+
+
+                        ]
+                    }
+                ]
+            };
+            Ext.onReady(function () {
+                Ext.tip.QuickTipManager.init();
+                Ext.create('Ext.Viewport', {
+                    layout: {
+                        type: 'border',
+                        padding: 0
+                    },
+                    defaults: {
+                        split: true
+                    },
+                    items: [
+                        chatClient
+                    ]
+                });
+            });
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>
