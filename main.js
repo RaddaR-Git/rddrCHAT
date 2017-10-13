@@ -748,6 +748,9 @@ var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
+//app.use(express.static(__dirname + '/public'))//for file satatic service express;
+app.use(express.static('Images'))//for file satatic service express;
+app.use(express.static('Nest'))//for file satatic service express;
 var validator = require("email-validator");
 
 var mn = new ENCManagerNest();
@@ -949,30 +952,6 @@ io.on('connection', function (socket) {
 
 
 
-//<editor-fold defaultstate="collapsed" desc="default">
-server.get('/', function (req, res) {
-
-    var debug = req.protocol + '://' + req.get('host') + replaceAll(mn.logsRute(), "Nest", "") + "L1_debug_appender.log";
-    var info = req.protocol + '://' + req.get('host') + replaceAll(mn.logsRute(), "Nest", "") + "L2_info_appender.log";
-    var warn = req.protocol + '://' + req.get('host') + replaceAll(mn.logsRute(), "Nest", "") + "L3_warn_appender.log";
-    var error = req.protocol + '://' + req.get('host') + replaceAll(mn.logsRute(), "Nest", "") + "L4_error_appender.log";
-    var fatal = req.protocol + '://' + req.get('host') + replaceAll(mn.logsRute(), "Nest", "") + "L5_fatal_appender.log";
-
-    var text = " RaddaR CHAT Servicio iniciado";
-    text = text + "<br>";
-    text = text + "<a href='" + debug + "'>" + debug + "</a>";
-    text = text + "<br>";
-    text = text + "<a href='" + info + "'>" + info + "</a>";
-    text = text + "<br>";
-    text = text + "<a href='" + warn + "'>" + warn + "</a>";
-    text = text + "<br>";
-    text = text + "<a href='" + error + "'>" + error + "</a>";
-    text = text + "<br>";
-    text = text + "<a href='" + fatal + "'>" + fatal + "</a>";
-
-    res.send(text);
-
-});
 //chatApp.set('port', (process.env.PORT || 3001));
 //httpServer.listen(app.get('port'), function () {
 //    mc.info('[RADDAR]-[BACKEND]-[CHAT SOKET-IO] init on port:[3001]');
