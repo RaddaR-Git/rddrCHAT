@@ -45,8 +45,8 @@ class ENC extends ENCPrimal {
     static UNDEFINED() {
         return  'undefined';
     }
-    static BOLEAN() {
-        return  'undefined';
+    static BOOLEAN() {
+         return  'boolean';
     }
     static NUMBER() {
         return  'number';
@@ -75,8 +75,8 @@ class ENC extends ENCPrimal {
                 return ENC.NULL();
             case ENC.UNDEFINED():
                 return ENC.UNDEFINED();
-            case ENC.BOLEAN():
-                return ENC.BOLEAN();
+            case ENC.BOOLEAN():
+                return ENC.BOOLEAN();
             case ENC.NUMBER():
                 return ENC.NUMBER();
             case ENC.STRING():
@@ -328,7 +328,7 @@ class ENCUnit extends ENCPrimal {
                 return '[E-Null]';
             case ENC.UNDEFINED():
                 return '[E-Undefined]';
-            case ENC.BOLEAN():
+            case ENC.BOOLEAN():
                 if (this.unitData) {
                     return 'true';
                 } else {
