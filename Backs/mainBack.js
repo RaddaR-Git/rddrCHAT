@@ -46,7 +46,7 @@ class ENC extends ENCPrimal {
         return  'undefined';
     }
     static BOOLEAN() {
-        return  'boolean';
+         return  'boolean';
     }
     static NUMBER() {
         return  'number';
@@ -783,8 +783,8 @@ const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, '/HTML/index2.html');
 
 const server = express()
-        .use((req, res) => res.sendFile(INDEX))
-        .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+  .use((req, res) => res.sendFile(INDEX) )
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
 
 const io = socketIO(server);
 
@@ -821,52 +821,43 @@ io.on('connection', function (socket) {
     //<editor-fold defaultstate="collapsed" desc="sendMessage">
     socket.on('sendMessage', function (dataPaket) {
         mc.debug('[CHAT SOKET-IO]-[SOKET:[' + socket.id + ']]-[sendMessage]-[' + 'room:' + dataPaket.room + 'to:' + dataPaket.to + ' from:' + dataPaket.from + " message:" + dataPaket.message + ']');
-        var toList = dataPaket.to;
-        var currentTo;
+
         if (dataPaket.room === 'GENERAL') {
-            for (var i = 0; i < toList.length; i++) {
-                currentTo = toList[i];
-                if (currentTo === 'ALL') {
-                    io.emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
-                } else {
-                    var idTo = hashUsersById[currentTo];
-                    var idFrom = hashUsersById[dataPaket.from];
-                    if (idTo !== undefined)
-                        io.to(idTo).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
-                    if (idTo !== undefined && idTo !== idFrom)
-                        io.to(idFrom).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
-                }
+            if (dataPaket.to === 'ALL') {
+                io.emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
+            } else {
+                var idTo = hashUsersById[dataPaket.to];
+                var idFrom = hashUsersById[dataPaket.from];
+                if (idTo !== undefined)
+                    io.to(idTo).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
+                if (idTo !== undefined && idTo !== idFrom)
+                    io.to(idFrom).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
             }
-
-
-
         } else {
-            for (var i = 0; i < toList.length; i++) {
-                currentTo = toList[i];
-                if (currentTo === 'ALL') {
-                    var ioRoomSokets = io.sockets.adapter.rooms['##ENCCHAT##' + dataPaket.room].sockets;
-                    if (ioRoomSokets !== null && ioRoomSokets !== undefined) {
-                        //socket.broadcast.to(dataPaket.room).emit('reciveMessage',  {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
-                        io.in('##ENCCHAT##' + dataPaket.room).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
-                    }
-                } else {
-                    try {
-                        var idTo = hashUsersById[currentTo];
-                        var idFrom = hashUsersById[dataPaket.from];
-                        var ioRoomSokets = io.sockets.adapter.rooms['##ENCCHAT##' + dataPaket.room].sockets;
-                        var toSoket = ioRoomSokets[idTo];
-                        if (toSoket !== null && toSoket !== undefined) {
-                            if (idTo !== undefined)
-                                io.to(idTo).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
-                            if (idTo !== undefined && idTo !== idFrom)
-                                io.to(idFrom).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
-                        }
-
-                    } catch (e) {
-                    }
+            if (dataPaket.to === 'ALL') {
+                var ioRoomSokets = io.sockets.adapter.rooms['##ENCCHAT##' + dataPaket.room].sockets;
+                if (ioRoomSokets !== null && ioRoomSokets !== undefined) {
+                    //socket.broadcast.to(dataPaket.room).emit('reciveMessage',  {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
+                    io.in('##ENCCHAT##' + dataPaket.room).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
                 }
-            }
 
+            } else {
+                try {
+                    var idTo = hashUsersById[dataPaket.to];
+                    var idFrom = hashUsersById[dataPaket.from];
+                    var ioRoomSokets = io.sockets.adapter.rooms['##ENCCHAT##' + dataPaket.room].sockets;
+                    var toSoket = ioRoomSokets[idTo];
+                    if (toSoket !== null && toSoket !== undefined) {
+                        if (idTo !== undefined)
+                            io.to(idTo).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
+                        if (idTo !== undefined && idTo !== idFrom)
+                            io.to(idFrom).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
+                    }
+
+                } catch (e) {
+                }
+
+            }
         }
     });
     //</editor-fold>

@@ -58,7 +58,7 @@ and open the template in the editor.
                             store.add(
                                     {
                                         room: dataPacket.room,
-                                        to: dataPacket.to.toString(),
+                                        to: dataPacket.to,
                                         from: dataPacket.from,
                                         message: dataPacket.message
                                     }
@@ -127,7 +127,7 @@ and open the template in the editor.
                     soketConnection.emit('sendMessage',
                             {
                                 room: room,
-                                to: [to],
+                                to: to,
                                 from: Ext.getCmp('textAlias').getValue(),
                                 message: Ext.getCmp('textMessage').getValue()
                             }
