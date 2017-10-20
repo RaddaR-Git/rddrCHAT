@@ -227,6 +227,16 @@ and open the template in the editor.
                                 id: 'buttonConnect',
                                 text: 'CONNECT',
                                 handler: connect
+                            },
+                            {
+                                xtype: 'button',
+                                id: 'buttonClean',
+                                text: 'CLEAN',
+                                x: 820,
+                                y: 20,
+                                handler: function () {
+                                    console.log('listo');
+                                }
                             }
                         ]
                     },
@@ -308,13 +318,6 @@ and open the template in the editor.
                                                         width: 150,
                                                         text: 'SEND',
                                                         handler: send
-                                                    },
-                                                    {
-                                                        xtype: 'button',
-                                                        id: 'buttonClean',
-                                                        region: 'east',
-                                                        width: 150,
-                                                        text: 'CLEAN'
                                                     }
                                                 ]
                                             }
