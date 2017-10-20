@@ -300,6 +300,13 @@ and open the template in the editor.
                                                         region: 'east',
                                                         width: 150,
                                                         text: 'SEND',
+                                                        listeners: {
+                                                            specialkey: function (field, e) {
+                                                                if (e.getKey() == e.ENTER) {
+                                                                    send();
+                                                                }
+                                                            }
+                                                        },
                                                         handler: send
                                                     }
                                                 ]
