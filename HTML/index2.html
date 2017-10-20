@@ -227,17 +227,6 @@ and open the template in the editor.
                                 id: 'buttonConnect',
                                 text: 'CONNECT',
                                 handler: connect
-                            },
-                            {
-                                xtype: 'button',
-                                id: 'buttonClean',
-                                text: 'CLEAN',
-                                x: 820,
-                                y: 20,
-                                handler: function () {
-                                    var store = Ext.getCmp('gridChat').getStore();
-                                    store.removeAll();
-                                }
                             }
                         ]
                     },
@@ -308,6 +297,8 @@ and open the template in the editor.
                                                             specialkey: function (field, e) {
                                                                 if (e.getKey() == e.ENTER) {
                                                                     send();
+                                                                } else if (e.getKey() == e.ESC) {
+                                                                    Ext.getCmp('gridChat').getStore().removeAll();
                                                                 }
                                                             }
                                                         }
