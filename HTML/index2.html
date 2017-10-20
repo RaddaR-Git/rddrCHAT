@@ -235,7 +235,8 @@ and open the template in the editor.
                                 x: 820,
                                 y: 20,
                                 handler: function () {
-                                    console.log('listo');
+                                    var store = Ext.getCmp('gridChat').getStore();
+                                    store.removeAll();
                                 }
                             }
                         ]
