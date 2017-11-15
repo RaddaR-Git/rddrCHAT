@@ -69,7 +69,7 @@ and open the template in the editor.
                         soketConnection.on('updateAllUserList', function (input) {
                             store = Ext.getCmp('gridUsers').getStore();
                             store.removeAll();
-                            store.add({user: 'ALL'});
+//                            store.add({user: 'ALL'});
                             for (var key in input) {
                                 store.add(input[key]);
                             }
@@ -111,7 +111,6 @@ and open the template in the editor.
                     } catch (e) {
                         to = 'ALL';
                     }
-
 
                     var room = 'GENERAL';
                     try {
@@ -367,6 +366,10 @@ and open the template in the editor.
                                         title: 'USERS',
                                         store: store2,
                                         flex: 1,
+                                        selModel: {
+                                            selType: 'cellmodel',
+                                            mode: 'MULTI'
+                                        },
                                         columns: [
                                             {
                                                 xtype: 'gridcolumn',
