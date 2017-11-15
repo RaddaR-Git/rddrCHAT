@@ -887,8 +887,9 @@ io.on('connection', function (socket) {
             for (var key in sockets)
             {
                 currentSoket = sockets[key];
-//                usersList.push({user: currentSoket.username});
-                usersList.push({user: 'juanito'});
+                if (currentSoket.hasOwnProperty('username')) {
+                    usersList.push({user: currentSoket.username});
+                }
             }
         } else {
             try {
