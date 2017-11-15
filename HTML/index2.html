@@ -102,15 +102,19 @@ and open the template in the editor.
             var send = function () {
                 if (soketConnection !== null && Ext.getCmp('textMessage').getValue() !== '') {
 
-                    var to = 'ALL';
-                    try {
-                        if (Ext.getCmp('gridUsers').getSelectionModel().hasSelection()) {
-                            var row = Ext.getCmp('gridUsers').getSelectionModel().getSelection()[0];
-                            to = row.get('user');
-                        }
-                    } catch (e) {
-                        to = 'ALL';
-                    }
+
+//                    a = Ext.getCmp('gridUsers').getSelectionModel().getSelection();
+//                    a.map(function (x) {
+//                        return x.data.user
+//                    }).filter(function (x) {
+//                        return !Ext.isEmpty(x);
+//                    });
+
+                    var to = Ext.getCmp('gridUsers').getSelectionModel().getSelection().map(function (x) {
+                        return x.data.user
+                    }).filter(function (x) {
+                        return !Ext.isEmpty(x);
+                    });
 
                     var room = 'GENERAL';
                     try {
@@ -122,16 +126,17 @@ and open the template in the editor.
                         room = 'GENERAL';
                     }
 
-
-                    soketConnection.emit('sendMessage',
-                            {
-                                room: room,
-                                to: [to],
-                                from: Ext.getCmp('textAlias').getValue(),
-                                message: Ext.getCmp('textMessage').getValue()
-                            }
-                    );
-                    Ext.getCmp('textMessage').setValue('');
+                    if (!Ext.isEmpty(to)) {
+                        soketConnection.emit('sendMessage',
+                                {
+                                    room: room,
+                                    to: to,
+                                    from: Ext.getCmp('textAlias').getValue(),
+                                    message: Ext.getCmp('textMessage').getValue()
+                                }
+                        );
+                        Ext.getCmp('textMessage').setValue('');
+                    }
                 }
             };
             var refreshUsers = function () {
