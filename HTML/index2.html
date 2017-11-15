@@ -72,7 +72,8 @@ and open the template in the editor.
 //                            store.add({user: 'ALL'});
                             for (var key in input) {
 //                                Ext.getCmp('textAlias').getValue()
-                                console.log(Ext.getCmp('textAlias').getValue());
+                                x = Ext.getCmp('textAlias').getValue();
+                                console.log(x);
                                 console.log(input[key]);
                                 store.add(input[key]);
                             }
