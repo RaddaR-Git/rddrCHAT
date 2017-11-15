@@ -833,13 +833,11 @@ io.on('connection', function (socket) {
                     var idFrom = hashUsersById[dataPaket.from];
                     if (idTo !== undefined)
                         io.to(idTo).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
-                    if (idTo !== undefined && idTo !== idFrom)
-                        io.to(idFrom).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
                 }
             }
-
-
-
+            //regresa el mensaje 
+            if (idTo !== undefined && idTo !== idFrom)
+                io.to(idFrom).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
         } else {
             for (var i = 0; i < toList.length; i++) {
                 currentTo = toList[i];
