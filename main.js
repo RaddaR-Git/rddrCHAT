@@ -830,7 +830,6 @@ io.on('connection', function (socket) {
                     io.emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
                 } else {
                     var idTo = hashUsersById[currentTo];
-                    mc.debug('perra');
                     var idFrom = hashUsersById[dataPaket.from];
                     if (idTo !== undefined)
                         io.to(idTo).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
