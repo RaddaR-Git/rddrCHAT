@@ -67,13 +67,12 @@ and open the template in the editor.
                             Ext.getCmp('gridChat').getView().focusRow(store.getCount());
                         });
                         soketConnection.on('updateAllUserList', function (input) {
+                            console.log('updateAllUserList');
                             store = Ext.getCmp('gridUsers').getStore();
                             store.removeAll();
 //                            store.add({user: 'ALL'});
                             for (var key in input) {
-                                if (!Ext.isEmpty(input[key])) {
-                                    store.add(input[key]);
-                                }
+                                store.add(input[key]);
                             }
                             Ext.getCmp('gridUsers').reconfigure(store);
                             Ext.getCmp('gridUsers').getView().focusRow(store.getCount());
