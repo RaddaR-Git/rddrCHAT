@@ -836,8 +836,7 @@ io.on('connection', function (socket) {
                 }
             }
             //regresa el mensaje 
-            if (idTo !== undefined && idTo !== idFrom)
-                io.to(idFrom).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
+            io.to(idFrom).emit('reciveMessage', {room: dataPaket.room, to: dataPaket.to, from: dataPaket.from, message: dataPaket.message});
         } else {
             for (var i = 0; i < toList.length; i++) {
                 currentTo = toList[i];
