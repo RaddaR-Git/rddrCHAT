@@ -883,6 +883,7 @@ io.on('connection', function (socket) {
         var usersList = [];
         if (currentRoom === null) {
             sockets = io.sockets.sockets;
+            sockets.push(sockets.length);
             for (var key in sockets)
             {
                 currentSoket = sockets[key];
