@@ -93,7 +93,7 @@ and open the template in the editor.
 
 
 
-                        soketConnection.emit('addUser', Ext.getCmp('textAlias').getValue());
+                        soketConnection.emit('addUser', parseInt(Ext.getCmp('textAlias').getValue()));
                         Ext.getCmp('buttonConnect').setText('DISCONECT');
                     }
 
