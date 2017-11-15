@@ -71,7 +71,6 @@ and open the template in the editor.
                             store.removeAll();
 //                            store.add({user: 'ALL'});
                             for (var key in input) {
-                                console.log(input[key]);
                                 store.add(input[key]);
                             }
                             Ext.getCmp('gridUsers').reconfigure(store);
